@@ -1,11 +1,11 @@
 'use strict';
+const errorClassName = ' error';
 
 class Form {
     constructor(formId, buttonId, resultContainerId) {
         this.form = document.getElementById(formId);
         this.button = document.getElementById(buttonId);
         this.resultContainer = document.getElementById(resultContainerId);
-        this.errorClassName = ' error';
         this.validateResult = { isValid: false, errorFields: [] };
         this.form.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -16,13 +16,13 @@ class Form {
     validate() {
         this.validateResult.errorFields = [];
 
-        if (this.nameValidation('fio') === false) {
+        if (nameValidation.bind(this)('fio') === false) {
             this.validateResult.errorFields.push('fio');
         };
-        if (this.emailValidation('email') === false) {
+        if (emailValidation.bind(this)('email') === false) {
             this.validateResult.errorFields.push('email');
         };
-        if (this.phoneValidation('phone') === false) {
+        if (phoneValidation.bind(this)('phone') === false) {
             this.validateResult.errorFields.push('phone');
         };
 
@@ -49,72 +49,71 @@ class Form {
 
     submit() {
         if (this.validate().isValid === true) {
-            this.sendRequest();
+            sendRequest.bind(this)();
         }
     }
+}
 
-    nameValidation(fieldName) {
-        const field = this.form.querySelector('input[name = ' + fieldName + ']');
-        if (field === undefined || field === null) {
-            console.log('Can\'t find input with name ' + fieldName);
-            return false;
-        }
-
-        const nameValidationRegExp = /^([A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+)$/;
-        this.applyValidationToInput(nameValidationRegExp.test(field.value), field);
+function nameValidation(fieldName) {
+    const field = this.form.querySelector('input[name = ' + fieldName + ']');
+    if (field === undefined || field === null) {
+        console.log('Can\'t find input with name ' + fieldName);
+        return false;
     }
 
-    emailValidation(fieldName) {
-        const field = this.form.querySelector('input[name = ' + fieldName + ']');
-        if (field === undefined || field === null) {
-            console.log('Can\'t find input with name ' + fieldName);
-            return false;
-        }
-        const emeilValidationRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))\@{1}(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com){1}$/i;
-        this.applyValidationToInput(emeilValidationRegExp.test(field.value), field);
+    const nameValidationRegExp = /^([A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+)$/;
+    return applyValidationToInput(nameValidationRegExp.test(field.value), field);
+}
+
+function emailValidation(fieldName) {
+    const field = this.form.querySelector('input[name = ' + fieldName + ']');
+    if (field === undefined || field === null) {
+        console.log('Can\'t find input with name ' + fieldName);
+        return false;
+    }
+    const emeilValidationRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))\@{1}(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com){1}$/i;
+    return applyValidationToInput(emeilValidationRegExp.test(field.value), field);
+}
+
+function phoneValidation(fieldName) {
+    const field = this.form.querySelector('input[name = ' + fieldName + ']');
+    if (field === undefined || field === null) {
+        console.log('Can\'t find input with name ' + fieldName);
+        return false;
+    }
+    const phoneRegExp = /^[+][0-9]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
+    const numberPattern = /\d+/g;
+    const numbersArr = field.value.match(numberPattern);
+    const isValid = phoneRegExp.test(field.value) && checkPhoneSumm(30, field.value.match(numberPattern)) === true;
+    return applyValidationToInput(isValid, field);
+}
+
+function checkPhoneSumm(limit, numbersArr) {
+    let summ = 0;
+    const singleNumberArr = numbersArr.join('').split('');
+    for (const number of singleNumberArr) {
+        summ += +number;
+    }
+    return summ <= limit
+}
+
+function applyValidationToInput(isValid, field) {
+    if (isValid) {
+        field.className = field.className.substring(0, field.className.indexOf(errorClassName));
+    } else if (field.className.indexOf(errorClassName) === -1) {
+        field.className += errorClassName;
     }
 
-    phoneValidation(fieldName) {
-        const field = this.form.querySelector('input[name = ' + fieldName + ']');
-        if (field === undefined || field === null) {
-            console.log('Can\'t find input with name ' + fieldName);
-            return false;
-        }
-        const phoneRegExp = /^[+][0-9]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
-        const numberPattern = /\d+/g;
-        const numbersArr = field.value.match(numberPattern);
-        const isValid = phoneRegExp.test(field.value) && this.checkPhoneSumm(30, field.value.match(numberPattern)) === true;
-        this.applyValidationToInput(isValid, field);
-    }
+    return isValid;
+}
 
-    checkPhoneSumm(limit, numbersArr) {
-        let summ = 0;
-        const singleNumberArr = numbersArr.join('').split('');
-        for (const number of singleNumberArr) {
-            summ += +number;
-        }
-        return summ <= limit
-    }
-
-    applyValidationToInput(isValid, field) {
-        if (isValid) {
-            field.className = field.className.substring(0, field.className.indexOf(this.errorClassName));
-        } else if (field.className.indexOf(this.errorClassName) === -1) {
-            field.className += this.errorClassName;
-        }
-
-        return isValid;
-    }
-
-    // TO DO: this method not global
-    sendRequest() {
-        this.button.disabled = true;
-        const formData = new FormData(this.form);
-        const xhr = new XMLHttpRequest();
-        let action = this.form.action || './success.json';
-        xhr.open("POST", action, true);
-        xhr.send(formData);
-    }
+function sendRequest() {
+    this.button.disabled = true;
+    const formData = new FormData(this.form);
+    const xhr = new XMLHttpRequest();
+    let action = this.form.action || './success.json';
+    xhr.open("POST", action, true);
+    xhr.send(formData);
 }
 
 const MyForm = new Form('myForm', 'submitButton', 'resultContainer');
