@@ -8,15 +8,16 @@
 
 <body>
     <h1>Test </h1>
-    <form action="echo" id="myForm" class="b-form">
-        <input type="text" name="fio" placeholder="Ф.И.О">
-        <input type="email" name="email" placeholder="Email">
-        <input type="phone" name="phone" placeholder="Телефон">
-        <input type="submit" value="Отправить">
+    <form action="success.json" id="myForm">
+        <input type="text" name="fio" placeholder="Ф.И.О" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="phone" name="phone" placeholder="Телефон" required>
+        <button id="submitButton" type="submit">Отправить</button>
     </form>
     <div id="resultContainer"></div>
 
     <script src="./index.js"></script>
+    <link rel="stylesheet" href="./styles.css">
 </body>
 
 </html>
