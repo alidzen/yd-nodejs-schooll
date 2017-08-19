@@ -5,10 +5,10 @@ class Form {
         this.button = document.getElementById(buttonId);
         this.resultContainer = document.getElementById(resultContainerId);
         this.validateResult = { isValid: false, errorFields: [] };
-        this.form.addEventListener('submit', (event) => {
+        this.form.onsubmit = (event) => {
             event.preventDefault();
             this.submit();
-        })
+        }
     }
 
     validate() {
@@ -80,8 +80,7 @@ function phoneValidation(fieldName) {
         return false;
     }
     const phoneRegExp = /^[+][7]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
-    const numberPattern = /\d+/g;
-    const numbersArr = field.value.match(numberPattern);
+    const numbersArr = field.value.match(/\d+/g);
     const isValid = phoneRegExp.test(field.value) && checkPhoneSumm(30, field.value.match(numberPattern)) === true;
     return applyValidationToInput(isValid, field);
 }
@@ -96,12 +95,12 @@ function checkPhoneSumm(limit, numbersArr) {
 }
 
 function applyValidationToInput(isValid, field) {
-    const errorClassName = ' error';
+    const errorClassName = 'error';
 
     if (isValid) {
-        field.className = field.className.substring(0, field.className.indexOf(errorClassName));
-    } else if (field.className.indexOf(errorClassName) === -1) {
-        field.className += errorClassName;
+        field.classList.remove(errorClassName);
+    } else if (field.classList.contains(errorClassName)) {
+        field.classList.add(errorClassName);
     }
 
     return isValid;
@@ -127,7 +126,6 @@ function sendRequest() {
                 this.button.disabled = false;
             } else if (resp.status === 'progress') {
                 resultContainer.classList.add('progress');
-                this.button.disabled = false;
 
                 setInterval(() => {
                     this.sendRequest();
@@ -137,4 +135,8 @@ function sendRequest() {
     });
 }
 
-const MyForm = new Form('myForm', 'submitButton', 'resultContainer');
+let MyForm;
+
+window.onload = () => {
+    MyForm = new Form('myForm', 'submitButton', 'resultContainer');
+};
