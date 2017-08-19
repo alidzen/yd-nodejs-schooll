@@ -109,12 +109,32 @@ function applyValidationToInput(isValid, field) {
 
 function sendRequest() {
     this.button.disabled = true;
-    const formData = new FormData(this.form);
-    const xhr = new XMLHttpRequest();
-    let action = this.form.action || './data/success.json';
-    xhr.open("POST", action, true);
-    xhr.setRequestHeader("Content-Type", "multipart/form-data");
-    xhr.send(formData);
+    const dataUrl = 'https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/';
+    let url = this.form.action || dataUrl + 'success.json'
+    fetch(url, {
+        method: 'GET'
+    }).then(response => {
+        response.json().then(json => {
+            const resp = JSON.parse(atob(json.content));
+
+            if (resp.status === 'success') {
+                resultContainer.classList.add('success');
+                resultContainer.innerHTML = 'Success';
+                this.button.disabled = false;
+            } else if (resp.status === 'error') {
+                resultContainer.classList.add('error');
+                resultContainer.innerHTML = resp.reason;
+                this.button.disabled = false;
+            } else if (resp.status === 'progress') {
+                resultContainer.classList.add('progress');
+                this.button.disabled = false;
+
+                setInterval(() => {
+                    this.sendRequest();
+                }, resp.timeout);
+            }
+        });
+    });
 }
 
 const MyForm = new Form('myForm', 'submitButton', 'resultContainer');
