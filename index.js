@@ -59,7 +59,7 @@ function nameValidation(fieldName) {
         return false;
     }
 
-    const nameValidationRegExp = /^([A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+\s[A-Za-zА-Яа-я]+)$/;
+    const nameValidationRegExp = /^([A-Za-zА-Яа-я]+\s\s*[A-Za-zА-Яа-я]+\s\s*[A-Za-zА-Яа-я]+\s*)$/;
     return applyValidationToInput(nameValidationRegExp.test(field.value), field);
 }
 
@@ -80,8 +80,7 @@ function phoneValidation(fieldName) {
         return false;
     }
     const phoneRegExp = /^[+][7]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
-    const numbersArr = field.value.match(/\d+/g);
-    const isValid = phoneRegExp.test(field.value) && checkPhoneSumm(30, field.value.match(numberPattern)) === true;
+    const isValid = phoneRegExp.test(field.value) && checkPhoneSumm(30, field.value.match(/\d+/g)) === true;
     return applyValidationToInput(isValid, field);
 }
 
@@ -99,7 +98,7 @@ function applyValidationToInput(isValid, field) {
 
     if (isValid) {
         field.classList.remove(errorClassName);
-    } else if (field.classList.contains(errorClassName)) {
+    } else {
         field.classList.add(errorClassName);
     }
 
@@ -107,9 +106,11 @@ function applyValidationToInput(isValid, field) {
 }
 
 function sendRequest() {
-    this.button.disabled = true;
     const dataUrl = 'https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/';
     let url = this.form.action || dataUrl + 'success.json'
+    this.button.disabled = true;
+    resultContainer.className = '';
+    resultContainer.innerHTML = '';
     fetch(url, {
         method: 'GET'
     }).then(response => {

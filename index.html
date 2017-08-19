@@ -7,14 +7,14 @@
 </head>
 
 <body>
-    <h1>Test </h1>
-    <form action="https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/success.json" id="myForm">
-        <input type="text" name="fio" placeholder="Ф.И.О" required>
-        <input type="email" name="email" placeholder="Email" required>
-        <input type="phone" name="phone" placeholder="Телефон" required>
-        <button id="submitButton">Отправить</button>
+    <form action="https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/success.json" id="myForm" class="container">
+        <input type="text" name="fio" placeholder="Ф.И.О" class="button" required>
+        <input type="email" name="email" placeholder="Email" class="button" required>
+        <input type="phone" name="phone" placeholder="Телефон" class="button" required>
+        <button id="submitButton" class="button">Отправить</button>
     </form>
-    <div id="resultContainer"></div>
+    <div id="resultContainer" class="container button">
+    </div>
 
     <script src="./index.js"></script>
     <link rel="stylesheet" href="./styles.css">

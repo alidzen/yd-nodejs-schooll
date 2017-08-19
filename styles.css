@@ -1,7 +1,54 @@
+#myForm {
+    display: flex;
+    flex-flow: column nowrap;
+    justify-content: center;
+    margin: 40px auto;
+}
+
+input {
+    border-color: transparent transparent #999;
+    margin-bottom: 20px;
+}
+
+input:last-of-type {
+    margin-bottom: 30px;
+}
+
+button {
+    border-width: 0;
+    background-color: #999;
+}
+
+button:hover {
+    background-color: #CD7373;
+}
+
 .error {
     border: 1px solid red;
 }
 
 .success {
     border: 1px solid green;
+}
+
+.progress {
+    border: 1px groove #7575F3;
+}
+
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    paddings: 0 15px;
+}
+
+.button {
+    line-height: 24px;
+    padding: 5px 10px;
+}
+
+#resultContainer {
+    border-radius: 5px;
+    text-align: center;
+    line-height: 24px;
+    padding: 5px 10px;
 }
