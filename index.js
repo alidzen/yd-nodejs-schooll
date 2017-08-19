@@ -1,6 +1,4 @@
 'use strict';
-const errorClassName = ' error';
-
 class Form {
     constructor(formId, buttonId, resultContainerId) {
         this.form = document.getElementById(formId);
@@ -41,9 +39,9 @@ class Form {
 
     setData(data) {
         if (data !== null && typeof data === 'object') {
-            this.form.querySelector('input[name = "fio"]').value = data.fio;
-            this.form.querySelector('input[name = "email"]').value = data.email;
-            this.form.querySelector('input[name = "phone"]').value = data.phone;
+            this.form.querySelector('input[name = "fio"]').value = data.fio || '';
+            this.form.querySelector('input[name = "email"]').value = data.email || '';
+            this.form.querySelector('input[name = "phone"]').value = data.phone || '';
         }
     }
 
@@ -81,7 +79,7 @@ function phoneValidation(fieldName) {
         console.log('Can\'t find input with name ' + fieldName);
         return false;
     }
-    const phoneRegExp = /^[+][0-9]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
+    const phoneRegExp = /^[+][7]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
     const numberPattern = /\d+/g;
     const numbersArr = field.value.match(numberPattern);
     const isValid = phoneRegExp.test(field.value) && checkPhoneSumm(30, field.value.match(numberPattern)) === true;
@@ -98,6 +96,8 @@ function checkPhoneSumm(limit, numbersArr) {
 }
 
 function applyValidationToInput(isValid, field) {
+    const errorClassName = ' error';
+
     if (isValid) {
         field.className = field.className.substring(0, field.className.indexOf(errorClassName));
     } else if (field.className.indexOf(errorClassName) === -1) {
@@ -111,8 +111,9 @@ function sendRequest() {
     this.button.disabled = true;
     const formData = new FormData(this.form);
     const xhr = new XMLHttpRequest();
-    let action = this.form.action || './success.json';
+    let action = this.form.action || './data/success.json';
     xhr.open("POST", action, true);
+    xhr.setRequestHeader("Content-Type", "multipart/form-data");
     xhr.send(formData);
 }
 
