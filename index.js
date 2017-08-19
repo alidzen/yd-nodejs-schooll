@@ -14,13 +14,13 @@ class Form {
     validate() {
         this.validateResult.errorFields = [];
 
-        if (nameValidation.bind(this)('fio') === false) {
+        if (nameValidation.call(this, 'fio') === false) {
             this.validateResult.errorFields.push('fio');
         };
-        if (emailValidation.bind(this)('email') === false) {
+        if (emailValidation.call(this, 'email') === false) {
             this.validateResult.errorFields.push('email');
         };
-        if (phoneValidation.bind(this)('phone') === false) {
+        if (phoneValidation.call(this, 'phone') === false) {
             this.validateResult.errorFields.push('phone');
         };
 
@@ -47,7 +47,7 @@ class Form {
 
     submit() {
         if (this.validate().isValid === true) {
-            sendRequest.bind(this)();
+            sendRequest.call(this);
         }
     }
 }
@@ -55,7 +55,7 @@ class Form {
 function nameValidation(fieldName) {
     const field = this.form.querySelector('input[name = ' + fieldName + ']');
     if (field === undefined || field === null) {
-        console.log('Can\'t find input with name ' + fieldName);
+        console.error('Can\'t find input with name ' + fieldName);
         return false;
     }
 
@@ -66,7 +66,7 @@ function nameValidation(fieldName) {
 function emailValidation(fieldName) {
     const field = this.form.querySelector('input[name = ' + fieldName + ']');
     if (field === undefined || field === null) {
-        console.log('Can\'t find input with name ' + fieldName);
+        console.error('Can\'t find input with name ' + fieldName);
         return false;
     }
     const emeilValidationRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))\@{1}(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com){1}$/i;
@@ -76,7 +76,7 @@ function emailValidation(fieldName) {
 function phoneValidation(fieldName) {
     const field = this.form.querySelector('input[name = ' + fieldName + ']');
     if (field === undefined || field === null) {
-        console.log('Can\'t find input with name ' + fieldName);
+        console.error('Can\'t find input with name ' + fieldName);
         return false;
     }
     const phoneRegExp = /^[+][7]{1}[(][0-9]{3}[)][0-9]{3}[-][0-9]{2}[-][0-9]{2}$/;
@@ -88,7 +88,7 @@ function checkPhoneSumm(limit, numbersArr) {
     let summ = 0;
     const singleNumberArr = numbersArr.join('').split('');
     for (const number of singleNumberArr) {
-        summ += +number;
+        summ += parseInt(number);
     }
     return summ <= limit
 }
@@ -109,13 +109,22 @@ function sendRequest() {
     const dataUrl = 'https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/';
     let url = this.form.action || dataUrl + 'success.json'
     this.button.disabled = true;
-    resultContainer.className = '';
+    resultContainer.className = 'container button';
     resultContainer.innerHTML = '';
+    if (this.timerId) {
+        clearInterval(this.timerId);
+    }
     fetch(url, {
         method: 'GET'
     }).then(response => {
         response.json().then(json => {
-            const resp = JSON.parse(atob(json.content));
+            let resp = {};
+            if (json.content !== undefined) {
+                resp = JSON.parse(atob(json.content));
+            } else {
+                resp.status = 'progress';
+                resp.timeout = 5000;
+            }
 
             if (resp.status === 'success') {
                 resultContainer.classList.add('success');
@@ -128,8 +137,8 @@ function sendRequest() {
             } else if (resp.status === 'progress') {
                 resultContainer.classList.add('progress');
 
-                setInterval(() => {
-                    this.sendRequest();
+                this.timerId = setInterval(() => {
+                    this.submit();
                 }, resp.timeout);
             }
         });
