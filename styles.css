@@ -3,6 +3,7 @@
     flex-flow: column nowrap;
     justify-content: center;
     margin: 40px auto;
+    max-width: 600px;
 }
 
 input {
@@ -31,14 +32,10 @@ button:hover {
     border: 1px solid green;
 }
 
-.progress {
-    border: 1px groove #7575F3;
-}
-
 .container {
     max-width: 600px;
     margin: 0 auto;
-    paddings: 0 15px;
+    padding: 0 15px;
 }
 
 .button {
@@ -50,5 +47,6 @@ button:hover {
     border-radius: 5px;
     text-align: center;
     line-height: 24px;
-    padding: 5px 10px;
+    max-width: 580px;
+    margin: 0 auto;
 }

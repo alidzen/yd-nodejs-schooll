@@ -1,4 +1,5 @@
 'use strict';
+
 class Form {
     constructor(formId, buttonId, resultContainerId) {
         this.form = document.getElementById(formId);
@@ -24,7 +25,7 @@ class Form {
             this.validateResult.errorFields.push('phone');
         };
 
-        this.validateResult.isValid = this.validateResult.errorFields.length === 0 ? true : false;
+        this.validateResult.isValid = this.validateResult.errorFields.length === 0;
 
         return this.validateResult;
     }
@@ -69,8 +70,8 @@ function emailValidation(fieldName) {
         console.error('Can\'t find input with name ' + fieldName);
         return false;
     }
-    const emeilValidationRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))\@{1}(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com){1}$/i;
-    return applyValidationToInput(emeilValidationRegExp.test(field.value), field);
+    const emailValidationRegExp = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))\@{1}(ya\.ru|yandex\.ru|yandex\.ua|yandex\.by|yandex\.kz|yandex\.com){1}$/i;
+    return applyValidationToInput(emailValidationRegExp.test(field.value), field);
 }
 
 function phoneValidation(fieldName) {
@@ -107,10 +108,10 @@ function applyValidationToInput(isValid, field) {
 
 function sendRequest() {
     const dataUrl = 'https://api.github.com/repos/alidzen/yd-nodejs-schooll/contents/data/';
-    let url = this.form.action || dataUrl + 'success.json'
+    let url = this.form.action || dataUrl + 'success.json';
     this.button.disabled = true;
-    resultContainer.className = 'container button';
-    resultContainer.innerHTML = '';
+    this.resultContainer.className = 'container button';
+    this.resultContainer.innerHTML = '';
     if (this.timerId) {
         clearInterval(this.timerId);
     }
@@ -127,15 +128,15 @@ function sendRequest() {
             }
 
             if (resp.status === 'success') {
-                resultContainer.classList.add('success');
-                resultContainer.innerHTML = 'Success';
+                this.resultContainer.classList.add('success');
+                this.resultContainer.innerHTML = 'Success';
                 this.button.disabled = false;
             } else if (resp.status === 'error') {
-                resultContainer.classList.add('error');
-                resultContainer.innerHTML = resp.reason;
+                this.resultContainer.classList.add('error');
+                this.resultContainer.innerHTML = resp.reason;
                 this.button.disabled = false;
             } else if (resp.status === 'progress') {
-                resultContainer.classList.add('progress');
+                this.resultContainer.classList.add('progress');
 
                 this.timerId = setInterval(() => {
                     this.submit();
