@@ -18,6 +18,7 @@ input:last-of-type {
 button {
     border-width: 0;
     background-color: #999;
+    cursor: pointer;
 }
 
 button:hover {

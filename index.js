@@ -5,7 +5,7 @@ class Form {
         this.form = document.getElementById(formId);
         this.button = document.getElementById(buttonId);
         this.resultContainer = document.getElementById(resultContainerId);
-        this.validateResult = { isValid: false, errorFields: [] };
+        this.validateResult = {isValid: false, errorFields: []};
         this.form.onsubmit = (event) => {
             event.preventDefault();
             this.submit();
@@ -17,13 +17,13 @@ class Form {
 
         if (nameValidation.call(this, 'fio') === false) {
             this.validateResult.errorFields.push('fio');
-        };
+        }
         if (emailValidation.call(this, 'email') === false) {
             this.validateResult.errorFields.push('email');
-        };
+        }
         if (phoneValidation.call(this, 'phone') === false) {
             this.validateResult.errorFields.push('phone');
-        };
+        }
 
         this.validateResult.isValid = this.validateResult.errorFields.length === 0;
 
